@@ -1,0 +1,150 @@
+#include <iostream>
+#include <string>
+#include <algorithm> // Para max
+
+using namespace std;
+
+// Estructura para almacenar los datos del colaborador 
+struct Empleado {
+    int codigo;
+    string nombre;
+    string cargo;
+};
+
+// Estructura del Nodo para el Árbol BST [cite: 41]
+struct Nodo {
+    Empleado dato;
+    Nodo* izquierdo;
+    Nodo* derecho;
+
+    Nodo(Empleado emp) {
+        dato = emp;
+        izquierdo = nullptr;
+        derecho = nullptr;
+    }
+};
+
+class ArbolBST {
+private:
+    Nodo* raiz;
+
+    // Función interna recursiva para insertar [cite: 54]
+    Nodo* insertar(Nodo* nodo, Empleado emp) {
+        if (nodo == nullptr) return new Nodo(emp);
+
+        if (emp.codigo < nodo->dato.codigo)
+            nodo->izquierdo = insertar(nodo->izquierdo, emp);
+        else if (emp.codigo > nodo->dato.codigo)
+            nodo->derecho = insertar(nodo->derecho, emp);
+        else
+            cout << "\n[!] Error: El codigo " << emp.codigo << " ya existe en el sistema." << endl;
+
+        return nodo;
+    }
+
+    // Función de búsqueda optimizada [cite: 67]
+    Nodo* buscar(Nodo* nodo, int codigo) {
+        if (nodo == nullptr || nodo->dato.codigo == codigo) return nodo;
+        if (codigo < nodo->dato.codigo) return buscar(nodo->izquierdo, codigo);
+        return buscar(nodo->derecho, codigo);
+    }
+
+    // Recorridos del árbol [cite: 18, 19, 20]
+    void inorden(Nodo* nodo) {
+        if (nodo == nullptr) return;
+        inorden(nodo->izquierdo);
+        mostrarEmpleado(nodo);
+        inorden(nodo->derecho);
+    }
+
+    void preorden(Nodo* nodo) {
+        if (nodo == nullptr) return;
+        mostrarEmpleado(nodo);
+        preorden(nodo->izquierdo);
+        preorden(nodo->derecho);
+    }
+
+    void postorden(Nodo* nodo) {
+        if (nodo == nullptr) return;
+        postorden(nodo->izquierdo);
+        postorden(nodo->derecho);
+        mostrarEmpleado(nodo);
+    }
+
+    // Cálculo de altura y detección de hojas [cite: 21, 22]
+    int calcularAltura(Nodo* nodo) {
+        if (nodo == nullptr) return 0;
+        return 1 + max(calcularAltura(nodo->izquierdo), calcularAltura(nodo->derecho));
+    }
+
+    void imprimirHojas(Nodo* nodo) {
+        if (nodo == nullptr) return;
+        if (nodo->izquierdo == nullptr && nodo->derecho == nullptr) {
+            mostrarEmpleado(nodo);
+        }
+        imprimirHojas(nodo->izquierdo);
+        imprimirHojas(nodo->derecho);
+    }
+
+    void mostrarEmpleado(Nodo* n) {
+        cout << " -> [" << n->dato.codigo << "] " << n->dato.nombre << " (" << n->dato.cargo << ")" << endl;
+    }
+
+public:
+    ArbolBST() : raiz(nullptr) {}
+
+    void insertarEmpleado(Empleado e) { raiz = insertar(raiz, e); }
+
+    void buscarEmpleado(int c) {
+        Nodo* res = buscar(raiz, c);
+        if (res) {
+            cout << "\n--- Resultado de Busqueda ---" << endl;
+            mostrarEmpleado(res);
+        } else cout << "\n[!] Colaborador no registrado." << endl;
+    }
+
+    void verRaiz() {
+        if (raiz) { cout << "\n--- Autoridad Maxima (Raiz) ---\n"; mostrarEmpleado(raiz); }
+        else cout << "\n[!] El organigrama esta vacio." << endl;
+    }
+
+    void ejecutarInorden() { cout << "\n--- Listado Inorden (Jerarquico) ---\n"; inorden(raiz); }
+    void ejecutarPreorden() { cout << "\n--- Listado Preorden ---\n"; preorden(raiz); }
+    void ejecutarPostorden() { cout << "\n--- Listado Postorden ---\n"; postorden(raiz); }
+    void verAltura() { cout << "\nProfundidad del Organigrama: " << calcularAltura(raiz) << " niveles." << endl; }
+    void verHojas() { cout << "\n--- Personal Operativo (Nodos Hoja) ---\n"; imprimirHojas(raiz); }
+};
+
+int main() {
+    ArbolBST smartTree;
+    int opt, cod;
+    
+    do {
+        cout << "\n======================================";
+        cout << "\n   SISTEMA DE GESTION SMART-CAMPUS";
+        cout << "\n======================================";
+        cout << "\n1. Registrar Colaborador\n2. Buscar por Codigo\n3. Ver Raiz";
+        cout << "\n4. Listado Inorden\n5. Listado Preorden\n6. Listado Postorden";
+        cout << "\n7. Ver Altura\n8. Ver Hojas\n0. Salir";
+        cout << "\nSeleccione: "; cin >> opt;
+
+        if (opt == 1) {
+            Empleado e;
+            cout << "Codigo ID: "; cin >> e.codigo; cin.ignore();
+            cout << "Nombre Completo: "; getline(cin, e.nombre);
+            cout << "Cargo: "; getline(cin, e.cargo);
+            smartTree.insertarEmpleado(e);
+        } else if (opt == 2) {
+            cout << "ID a buscar: "; cin >> cod;
+            smartTree.buscarEmpleado(cod);
+        } else if (opt == 3) smartTree.verRaiz();
+        else if (opt == 4) smartTree.ejecutarInorden();
+        else if (opt == 5) smartTree.ejecutarPreorden();
+        else if (opt == 6) smartTree.ejecutarPostorden();
+        else if (opt == 7) smartTree.verAltura();
+        else if (opt == 8) smartTree.verHojas();
+
+    } while (opt != 0);
+
+    return 0;
+}
