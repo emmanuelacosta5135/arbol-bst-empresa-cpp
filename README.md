@@ -1,5 +1,20 @@
 # Árbol Binario de Búsqueda — Gestión de Empleados
 
+Instrucciones del README
+src/main.cpp
+capturas/
+Paso 2: Clonar el repositorio
+git clone https://github.com/usuario/arbol-bst-empresa-cpp.git
+cd arbol-bst-empresa-cpp
+Paso 3: Crear carpetas
+mkdir src
+mkdir capturas
+Paso 4: Crear archivo principal
+cd src
+touch main.cpp
+
+
+
 Sistema de gestión de empleados implementado con un Árbol Binario de Búsqueda (BST) en C++, desarrollado como práctica de la materia Estructura de Datos — Universidad Técnica de Ambato.
 
 ## Tecnologías
